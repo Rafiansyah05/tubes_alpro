@@ -249,6 +249,7 @@ func cariAset(cari *int, A *tabCrypto) {
     fmt.Scan(&nm)
 
     if *cari == 1 {
+		urutMenaikSelect(A)
         binarySearch(*A, nm)
     } else if *cari == 2 {
         sequentialSearch(*A, nm)
@@ -259,6 +260,44 @@ func cariAset(cari *int, A *tabCrypto) {
     fmt.Println(" ")
 }
 
+func binarySearch(A tabCrypto, nama string) {
+
+	fmt.Println("\n=============== Cari Aset Menggunakan Binary Search =================")
+
+	var low int = 0
+	var high int = len(A) - 1
+	var ditemukan bool = false
+
+	for low <= high {
+		mid := (low + high) / 2
+		if A[mid].Nama == nama {
+			fmt.Print("\nDitemukan Aset bernama: ", A[mid].Nama) 
+
+			fmt.Println(" ")
+			fmt.Println("DETAIL ASET")
+			fmt.Println(" ")
+
+			fmt.Println("Nama Aset: ", A[mid].Nama)
+			fmt.Println("Algoritma: ", A[mid].Algoritma)
+			fmt.Println("Kesulitan: ", A[mid].Kesulitan)
+			fmt.Println("Reward: ", A[mid].Reward)
+			
+			ditemukan = true
+
+		}else if A[mid].Nama < nama {
+			low = mid + 1
+		}else{
+			high = mid - 1
+		}
+	}
+
+	if ditemukan == false{
+		fmt.Println("Aset tidak ditemukan") 
+	}
+
+	fmt.Println(" ")
+	
+}
 
 func sequentialSearch(A tabCrypto, nama string){
 	fmt.Println("\n=============== Cari Aset Menggunakan Sequential Search =================")
@@ -268,7 +307,7 @@ func sequentialSearch(A tabCrypto, nama string){
 	i = 0
 	for i < len(A) && !ditemukan {
 		if A[i].Nama == nama {
-			fmt.Print("\nDitemukan Aset bernama: \n", A[i].Nama)
+			fmt.Print("\nDitemukan Aset bernama: ", A[i].Nama)
 
 			fmt.Println(" ")
 			fmt.Println("DETAIL ASET")
@@ -292,44 +331,7 @@ func sequentialSearch(A tabCrypto, nama string){
 }
 
 
-func binarySearch(A tabCrypto, nama string) {
 
-	fmt.Println("\n=============== Cari Aset Menggunakan Binary Search =================")
-
-	var low int = 0
-	var high int = len(A) - 1
-	var ditemukan bool = false
-
-	for low <= high && !ditemukan {
-		mid := (low + high) / 2
-		if A[mid].Nama == nama {
-			fmt.Print("\nDitemukan Aset bernama: \n", A[mid].Nama) 
-
-			fmt.Println(" ")
-			fmt.Println("DETAIL ASET")
-			fmt.Println(" ")
-
-			fmt.Println("Nama Aset: ", A[mid].Nama)
-			fmt.Println("Algoritma: ", A[mid].Algoritma)
-			fmt.Println("Kesulitan: ", A[mid].Kesulitan)
-			fmt.Println("Reward: ", A[mid].Reward)
-			
-			ditemukan = true
-
-		}else if A[mid].Nama < nama {
-			low = mid + 1
-		}else{
-			high = mid - 1
-		}
-	}
-
-	if !ditemukan{
-		fmt.Println("Aset tidak ditemukan") 
-	}
-
-	fmt.Println(" ")
-	
-}
 
 func urutkanAset(urut *int){
 	var tbCry tabCrypto
@@ -390,36 +392,59 @@ func urutkanAset(urut *int){
 
 
 func urutMenaikSelect(A *tabCrypto) {
-	n := len(*A)
-	for i := 0; i < n-1; i++ {
-		minIdx := i
-		for j := i + 1; j < n; j++ {
+	var j, i, minIdx int
+	var n int
+	var temp CryptoAsset
+
+	n = len(*A)
+
+	for i = 0; i < n-1; i++ {
+		minIdx = i
+
+		for j = i + 1; j < n; j++ {
 			if (*A)[j].Nama < (*A)[minIdx].Nama {
 				minIdx = j
 			}
 		}
-		(*A)[i], (*A)[minIdx] = (*A)[minIdx], (*A)[i]
+
+		temp = (*A)[i]
+		(*A)[i] = (*A)[minIdx]
+		(*A)[minIdx] = temp
+		// (*A)[i], (*A)[minIdx] = (*A)[minIdx], (*A)[i]
 	}
 }
 
 func urutMenurunSelect(A *tabCrypto) {
-	n := len(*A)
-	for i := 0; i < n-1; i++ {
-		maxIdx := i
-		for j := i + 1; j < n; j++ {
-			if (*A)[j].Nama > (*A)[maxIdx].Nama {
-				maxIdx = j
+	var j, i, minIdx int
+	var n int
+	var temp CryptoAsset
+
+	n = len(*A)
+
+	for i = 0; i < n-1; i++ {
+		minIdx = i
+
+		for j = i + 1; j < n; j++ {
+			if (*A)[j].Nama > (*A)[minIdx].Nama {
+				minIdx = j
 			}
 		}
-		(*A)[i], (*A)[maxIdx] = (*A)[maxIdx], (*A)[i]
+
+		temp = (*A)[i]
+		(*A)[i] = (*A)[minIdx]
+		(*A)[minIdx] = temp
+		// (*A)[i], (*A)[maxIdx] = (*A)[maxIdx], (*A)[i]
 	}
 }
 
 func urutMenaikInsertion(A *tabCrypto) {
-	n := len(*A)
-	for i := 1; i < n; i++ {
-		key := (*A)[i]
-		j := i - 1
+	var i, j, n int
+	var key CryptoAsset
+
+	n = len(*A)
+	for i = 1; i < n; i++ {
+		key = (*A)[i]
+		j = i - 1
 		for j >= 0 && (*A)[j].Nama > key.Nama {
 			(*A)[j+1] = (*A)[j]
 			j--
@@ -429,10 +454,13 @@ func urutMenaikInsertion(A *tabCrypto) {
 }
 
 func urutMenurunInsertion(A *tabCrypto) {
-	n := len(*A)
-	for i := 1; i < n; i++ {
-		key := (*A)[i]
-		j := i - 1
+	var i, j, n int
+	var key CryptoAsset
+
+	n = len(*A)
+	for i = 1; i < n; i++ {
+		key = (*A)[i]
+		j = i - 1
 		for j >= 0 && (*A)[j].Nama < key.Nama {
 			(*A)[j+1] = (*A)[j]
 			j--
