@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-const NMAX int = 1000000
+const NMAX int = 100
 
 type CryptoAsset struct {
 	Nama      string
@@ -121,6 +121,7 @@ func tambahAset(A *tabCrypto) {
 func ubahAset(A *tabCrypto) {
     var i int
     var nama string
+	var keluar bool = false
 
     fmt.Println("\n=============== Ubah Aset =================")
 
@@ -142,15 +143,19 @@ func ubahAset(A *tabCrypto) {
             fmt.Scan(&(*A)[i].Algoritma)
 
             fmt.Println("Data Berhasil Diubah")
-            return
+            keluar = true
         }
     }
-    fmt.Println("Aset tidak ditemukan")
+
+	if keluar == false {
+		fmt.Println("Aset tidak ditemukan")
+	}
+    
 }
 
 
 func hapusAset(A *tabCrypto) {
-    var i int
+    var i, j int
     var nama string
     var ditemukan bool = false
 
@@ -161,8 +166,7 @@ func hapusAset(A *tabCrypto) {
 
     for i = 0; i < jumlahAset; i++ {
         if (*A)[i].Nama == nama {
-            // Geser ke kiri semua elemen setelah i
-            for j := i; j < jumlahAset-1; j++ {
+            for j = i; j < jumlahAset-1; j++ {
                 (*A)[j] = (*A)[j+1]
             }
             jumlahAset--
@@ -225,7 +229,6 @@ func simulasiMining(A *tabCrypto, M *tabMining) {
                 fmt.Printf("Estimasi reward total: %.4f\n", totalReward)
 
                 ditemukan = true
-                break
             }
         }
         if !ditemukan {
@@ -261,51 +264,50 @@ func cariAset(cari *int, A *tabCrypto) {
 }
 
 func binarySearch(A tabCrypto, nama string) {
-
 	fmt.Println("\n=============== Cari Aset Menggunakan Binary Search =================")
-
 	var low int = 0
-	var high int = len(A) - 1
+	var mid int
+	var high int = jumlahAset - 1 
 	var ditemukan bool = false
 
-	for low <= high {
-		mid := (low + high) / 2
-		if A[mid].Nama == nama {
-			fmt.Print("\nDitemukan Aset bernama: ", A[mid].Nama) 
+	if jumlahAset == 0 {
+		fmt.Println("Tidak ada aset untuk dicari (data kosong).") 
+		
+	}
 
+	for low <= high && !ditemukan { // Tambahkan !ditemukan agar berhenti setelah ketemu.
+		mid = low + (high-low)/2 // Cara lebih aman untuk menghindari overflow.
+		if A[mid].Nama == nama {
+			fmt.Print("\nDitemukan Aset bernama: ", A[mid].Nama)
 			fmt.Println(" ")
 			fmt.Println("DETAIL ASET")
 			fmt.Println(" ")
-
-			fmt.Println("Nama Aset: ", A[mid].Nama)
-			fmt.Println("Algoritma: ", A[mid].Algoritma)
-			fmt.Println("Kesulitan: ", A[mid].Kesulitan)
-			fmt.Println("Reward: ", A[mid].Reward)
-			
+			fmt.Printf("Nama Aset : %-12s \n", A[mid].Nama)
+			fmt.Printf("Algoritma : %-12s\n", A[mid].Algoritma)
+			fmt.Printf("Kesulitan : %-12.2f \n ", A[mid].Kesulitan)
+			fmt.Printf("Reward : %-12.2f  \n", A[mid].Reward)
 			ditemukan = true
-
-		}else if A[mid].Nama < nama {
+		} else if A[mid].Nama < nama {
 			low = mid + 1
-		}else{
+		} else {
 			high = mid - 1
 		}
 	}
 
 	if ditemukan == false{
-		fmt.Println("Aset tidak ditemukan") 
+		fmt.Println("Aset tidak ditemukan")
 	}
-
 	fmt.Println(" ")
-	
 }
 
 func sequentialSearch(A tabCrypto, nama string){
 	fmt.Println("\n=============== Cari Aset Menggunakan Sequential Search =================")
 	var i int
 	var ditemukan bool = false
+	var n int = jumlahAset
 
 	i = 0
-	for i < len(A) && !ditemukan {
+	for i < n && !ditemukan {
 		if A[i].Nama == nama {
 			fmt.Print("\nDitemukan Aset bernama: ", A[i].Nama)
 
@@ -313,10 +315,10 @@ func sequentialSearch(A tabCrypto, nama string){
 			fmt.Println("DETAIL ASET")
 			fmt.Println(" ")
 
-			fmt.Println("Nama Aset: ", A[i].Nama)
-			fmt.Println("Algoritma: ", A[i].Algoritma)
-			fmt.Println("Kesulitan: ", A[i].Kesulitan)
-			fmt.Println("Reward: ", A[i].Reward)
+			fmt.Printf("Nama Aset : %-12s \n", A[i].Nama)
+			fmt.Printf("Algoritma : %-12s\n", A[i].Algoritma)
+			fmt.Printf("Kesulitan : %-12.2f \n ", A[i].Kesulitan)
+			fmt.Printf("Reward : %-12.2f  \n", A[i].Reward)
 			
 			ditemukan = true
 		}
@@ -369,7 +371,7 @@ func urutkanAset(urut *int){
 		fmt.Println("\nsilahkan pilih (1)/(2) mau menggunakan apa: ")
 		fmt.Println("1. Urut Menaik")
 		fmt.Println("2. Urut Menurun")
-		fmt.Print(">")
+		fmt.Print("> ")
 		fmt.Scan(&pilihUrut)
 
 		if pilihUrut == 1 {
@@ -396,13 +398,13 @@ func urutMenaikSelect(A *tabCrypto) {
 	var n int
 	var temp CryptoAsset
 
-	n = len(*A)
+	n = jumlahAset
 
-	for i = 0; i < n-1; i++ {
+	for i = 0; i < n; i++ {
 		minIdx = i
 
 		for j = i + 1; j < n; j++ {
-			if (*A)[j].Nama < (*A)[minIdx].Nama {
+			if ((*A)[j].Reward > (*A)[minIdx].Reward) || ((*A)[j].Kesulitan > (*A)[minIdx].Kesulitan) {
 				minIdx = j
 			}
 		}
@@ -410,29 +412,30 @@ func urutMenaikSelect(A *tabCrypto) {
 		temp = (*A)[i]
 		(*A)[i] = (*A)[minIdx]
 		(*A)[minIdx] = temp
+
 		// (*A)[i], (*A)[minIdx] = (*A)[minIdx], (*A)[i]
 	}
 }
 
 func urutMenurunSelect(A *tabCrypto) {
-	var j, i, minIdx int
+	var j, i, maxIdx int
 	var n int
 	var temp CryptoAsset
 
-	n = len(*A)
+	n = jumlahAset
 
-	for i = 0; i < n-1; i++ {
-		minIdx = i
+	for i = 0; i < n; i++ {
+		maxIdx = i
 
 		for j = i + 1; j < n; j++ {
-			if (*A)[j].Nama > (*A)[minIdx].Nama {
-				minIdx = j
+			if ((*A)[j].Reward > (*A)[maxIdx].Reward) || ((*A)[j].Kesulitan > (*A)[maxIdx].Kesulitan) {
+				maxIdx = j
 			}
 		}
 
 		temp = (*A)[i]
-		(*A)[i] = (*A)[minIdx]
-		(*A)[minIdx] = temp
+		(*A)[i] = (*A)[maxIdx]
+		(*A)[maxIdx] = temp
 		// (*A)[i], (*A)[maxIdx] = (*A)[maxIdx], (*A)[i]
 	}
 }
@@ -441,11 +444,11 @@ func urutMenaikInsertion(A *tabCrypto) {
 	var i, j, n int
 	var key CryptoAsset
 
-	n = len(*A)
+	n = jumlahAset
 	for i = 1; i < n; i++ {
 		key = (*A)[i]
 		j = i - 1
-		for j >= 0 && (*A)[j].Nama > key.Nama {
+		for j >= 0 && ((*A)[j].Reward > key.Reward || (*A)[j].Kesulitan > key.Kesulitan){
 			(*A)[j+1] = (*A)[j]
 			j--
 		}
@@ -457,11 +460,11 @@ func urutMenurunInsertion(A *tabCrypto) {
 	var i, j, n int
 	var key CryptoAsset
 
-	n = len(*A)
+	n = jumlahAset
 	for i = 1; i < n; i++ {
 		key = (*A)[i]
 		j = i - 1
-		for j >= 0 && (*A)[j].Nama < key.Nama {
+		for j >= 0 && ((*A)[j].Reward < key.Reward || (*A)[j].Kesulitan < key.Kesulitan) {
 			(*A)[j+1] = (*A)[j]
 			j--
 		}
@@ -472,18 +475,21 @@ func urutMenurunInsertion(A *tabCrypto) {
 func laporanMining(M *tabMining) {
 	var total float64
 	var i int
+	var n int = jumlahMining
 
 	fmt.Println("\n=============== Laporan Mining =================")
 
-	if len(*M) == 0 {
+	if n == 0 {
 		fmt.Println("Tidak ada data mining yang tersedia.")
 
 		fmt.Println(" ")
 	}else{
-		for i = 0; i < len(*M); i++{
-			fmt.Println("Nama Aset\t: ", (*M)[i].Nama)
-			fmt.Println("Reward\t: ", (*M)[i].Reward)
-			fmt.Printf("Durasi\t: %d hari", (*M)[i].Hari)
+		for i = 0; i < n; i++{
+			fmt.Printf("Nama Aset %-12s : ", (*M)[i].Nama)
+			fmt.Printf("Reward %-12.2f : ", (*M)[i].Reward)
+			fmt.Printf("Durasi %-12d : hari", (*M)[i].Hari)
+			fmt.Println(" ")
+
 			total += (*M)[i].Reward
 
 			fmt.Println(" ")
