@@ -193,12 +193,13 @@ func lihatAset(A tabCrypto) {
 
 	if jumlahAset == 0 {
 		fmt.Println("Tidak ada aset yang tersedia")
-		return
+	}else{
+		fmt.Printf("%-12s %-10s %-10s %-10s\n", "Nama Aset", "Kesulitan", "Reward", "Algoritma")
+		for i = 0; i < jumlahAset; i++ {
+			fmt.Printf("%-12s %-10.2f %-10.2f %-10s\n", A[i].Nama, A[i].Kesulitan, A[i].Reward, A[i].Algoritma)
+		}
 	}
-	fmt.Printf("%-12s %-10s %-10s %-10s\n", "Nama Aset", "Kesulitan", "Reward", "Algoritma")
-	for i = 0; i < jumlahAset; i++ {
-		fmt.Printf("%-12s %-10.2f %-10.2f %-10s\n", A[i].Nama, A[i].Kesulitan, A[i].Reward, A[i].Algoritma)
-	}
+	
 }
 
 func simulasiMining(A *tabCrypto, M *tabMining) {
