@@ -23,8 +23,17 @@ type tabMining [NMAX]hasilMining
 var jumlahAset int = 0
 var jumlahMining int = 0
 
+var namaPanggil string 
+
 func main() {
 	var pilih int
+
+	fmt.Print("Haloo!! \n Nama Kamu Siapaa : ")
+	fmt.Scan(&namaPanggil)
+	fmt.Printf("\nOkeey, Salam kenal yaa %s kenalin aku program yang dibuat sama AHMAD RAFIANSYAH dan MUH. RIDWAN FAIZ HERLAMBANG\ndisini kamu akan belajar tentang simulasi penambangan cryptocurrency\n", namaPanggil)
+
+
+	fmt.Println(" ")
 
 	fmt.Println(`
   ███████╗██╗███╗   ███╗██╗   ██╗██╗      █████╗ ███████╗  ██╗
@@ -89,6 +98,7 @@ func opsi(pilihan int) {
 		case 8:
 			laporanMining(&mining)
 		case 9:
+			fmt.Printf("\nTerimakasih %s sudah mencoba menggunakan program buatan kami, semoga bermanfaat yaa\nsampai bertemu lagi!!! #TUBES_APRO2\n", namaPanggil)
 			kondisi = false
 		default:
 			fmt.Println("Pilihan tidak valid!")
@@ -107,7 +117,7 @@ func tambahAset(A *tabCrypto) {
 	fmt.Print("Reward: ")
 	fmt.Scan(&A[jumlahAset].Reward)
 
-	fmt.Println("\nBerikut daftar algoritma yang biasa digunakan:")
+	fmt.Printf("\nBerikut daftar algoritma yang biasa %s digunakan:\n", namaPanggil)
 	fmt.Printf("%-12s %-35s\n", "ALGORITMA", "CONTOH KOIN")
 	fmt.Printf("%-12s %-35s\n", "SHA-256", "Bitcoin(BTC), Bitcoin Cash(BCH)")
 	fmt.Printf("%-12s %-35s\n", "Scrypt", "Litecoin(LTC)")
@@ -129,7 +139,7 @@ func ubahAset(A *tabCrypto) {
 	fmt.Println("\n===========================================")
 	fmt.Println("=============== Ubah Aset =================")
 	fmt.Println("===========================================")
-	fmt.Print("Masukkan nama aset yang ingin diubah: ")
+	fmt.Printf("Masukkan nama aset yang ingin %s ubah: ", namaPanggil)
 	fmt.Scan(&nama)
 
 	i = 0
@@ -144,7 +154,7 @@ func ubahAset(A *tabCrypto) {
 			fmt.Print("Algoritma Baru: ")
 			fmt.Scan(&(*A)[i].Algoritma)
 
-			fmt.Println("Data Berhasil Diubah")
+			fmt.Println("Yeyy Data Berhasil Diubah")
 			keluar = true
 		
 		}
@@ -152,7 +162,7 @@ func ubahAset(A *tabCrypto) {
 	}
 
 	if !keluar {
-		fmt.Println("Aset tidak ditemukan")
+		fmt.Println("Aduh!! Aset tidak ditemukan")
 	}
 }
 
@@ -174,13 +184,13 @@ func hapusAset(A *tabCrypto) {
 				(*A)[j] = (*A)[j+1]
 			}
 			jumlahAset--
-			fmt.Println("Aset berhasil dihapus.")
+			fmt.Println("Yeyy Aset berhasil dihapus.")
 			ditemukan = true
 		}
 		i++
 	}
 	if !ditemukan {
-		fmt.Println("Aset tidak ditemukan")
+		fmt.Println("Aduhh!! Aset tidak ditemukan")
 	}
 }
 
@@ -192,7 +202,7 @@ func lihatAset(A tabCrypto) {
 	var i int
 
 	if jumlahAset == 0 {
-		fmt.Println("Tidak ada aset yang tersedia")
+		fmt.Println("Upps!! Tidak ada aset yang tersedia")
 	}else{
 		fmt.Printf("%-12s %-10s %-10s %-10s\n", "Nama Aset", "Kesulitan", "Reward", "Algoritma")
 		for i = 0; i < jumlahAset; i++ {
@@ -236,7 +246,7 @@ func simulasiMining(A *tabCrypto, M *tabMining) {
 		}
 	}
 	if !ditemukan {
-		fmt.Println("Aset tidak ditemukan")
+		fmt.Println("Aduh!! Aset tidak ditemukan")
 	}
 }
 
