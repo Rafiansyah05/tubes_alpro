@@ -36,12 +36,12 @@ func main() {
 	fmt.Println(" ")
 
 	fmt.Println(`
-  ███████╗██╗███╗   ███╗██╗   ██╗██╗      █████╗ ███████╗  ██╗
-  ██╔════╝██║████╗ ████║██║   ██║██║     ██╔══██╗██╔════╝  ██║
-  ███████╗██║██╔████╔██║██║   ██║██║     ███████║███████╗  ██║
-  ╚════██║██║██║╚██╔╝██║██║   ██║██║     ██╔══██║╚════██║  ██║
-  ███████║██║██║ ╚═╝ ██║╚██████╔╝███████╗██║  ██║███████║  ██║
-  ╚══════╝╚═╝╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝  ╚═╝
+  ███████╗██╗███╗   ███╗██╗   ██╗██╗      █████╗ ███████╗██╗
+  ██╔════╝██║████╗ ████║██║   ██║██║     ██╔══██╗██╔════╝██║
+  ███████╗██║██╔████╔██║██║   ██║██║     ███████║███████╗██║
+  ╚════██║██║██║╚██╔╝██║██║   ██║██║     ██╔══██║╚════██║██║
+  ███████║██║██║ ╚═╝ ██║╚██████╔╝███████╗██║  ██║███████║██║
+  ╚══════╝╚═╝╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚══════╝╚═╝
 
     ██████╗██████╗ ██╗   ██╗██████╗ ████████╗ ██████╗
    ██╔════╝██╔══██╗╚██╗ ██╔╝██╔══██╗╚══██╔══╝██╔═══██╗
@@ -186,7 +186,9 @@ func hapusAset(A *tabCrypto) {
 			jumlahAset--
 			fmt.Println("Yeyy Aset berhasil dihapus.")
 			ditemukan = true
+
 		}
+
 		i++
 	}
 	if !ditemukan {
@@ -212,42 +214,49 @@ func lihatAset(A tabCrypto) {
 	
 }
 
-func simulasiMining(A *tabCrypto, M *tabMining) {
+func simulasiMining(A *tabCrypto, M *tabMining){
 	var nama string
-	var power float64
-	var hari, i int
-	var estimasiWaktu, totalReward float64
+	var power, estimasiWaktu, totalReward float64
+	var hari, i int	
 	var ditemukan bool = false
 
-	fmt.Println("\n=================================================")
-	fmt.Println("=============== Simulasi Mining =================")
-	fmt.Println("=================================================")
+	fmt.Println("\n=============== Simulasi Mining =================")
 	fmt.Print("Nama aset: ")
 	fmt.Scan(&nama)
 
-	for i = 0; i < jumlahAset; i++ {
-		if (*A)[i].Nama == nama {
-			fmt.Print("Daya Komputasi (hash/s): ")
-			fmt.Scan(&power)
-			fmt.Print("Jumlah Hari: ")
-			fmt.Scan(&hari)
+	
+	if len(*A) == 0 {
+		fmt.Println("Tidak ada aset yang tersedia")
+	}else{
+		i = 0
+		for i < len(*A) && !ditemukan {
+			if (*A)[i].Nama == nama{
 
-			estimasiWaktu = (*A)[i].Kesulitan / power
-			totalReward = float64(hari) / estimasiWaktu * (*A)[i].Reward
+				fmt.Print("Daya Komputasi (hash/s): ")
+				fmt.Scan(&power)
+				fmt.Print("Jumlah Hari: ")
+				fmt.Scan(&hari)
 
-			(*M)[jumlahMining] = hasilMining{nama, totalReward, hari}
-			jumlahMining++
+				estimasiWaktu = (*A)[i].Kesulitan / power
+				totalReward = float64(hari) / estimasiWaktu * (*A)[i].Reward
 
-			fmt.Printf("Estimasi waktu per blok: %.2f hari\n", estimasiWaktu)
-			fmt.Printf("Estimasi reward total: %.2f\n", totalReward)
+				(*M)[i].Nama = nama
+				(*M)[i].Reward = totalReward
+				(*M)[i].Hari = hari
 
-			ditemukan = true
-			
+				fmt.Printf("Estimasi waktu per blok: %.2f hari\n", estimasiWaktu)
+				fmt.Printf("Estimasi reward total: %.4f\n", totalReward)
+
+				ditemukan = true
+			}
+		}
+
+		if !ditemukan {
+			fmt.Println("Aset tidak ditemukan")
 		}
 	}
-	if !ditemukan {
-		fmt.Println("Aduh!! Aset tidak ditemukan")
-	}
+	fmt.Println(" ")
+
 }
 
 func cariAset(cari *int, A *tabCrypto) {
@@ -278,15 +287,27 @@ func binarySearch(A tabCrypto, nama string) {
 	fmt.Println("===============================================")
 
 	var low int = 0
-	var high int = jumlahAset-1
-	var mid int
+	var high int = jumlahAset - 1
+	var mid, i int
 	var ditemukan bool = false
 
 	for low <= high && !ditemukan {
 		mid = (low + high) / 2
 		if A[mid].Nama == nama {
-			tampilDetailAset(A[mid])
+			i = mid
+
+			for i >= 0 && A[i].Nama == nama {
+				i--
+			}
+			i++
+
+			for i < jumlahAset && A[i].Nama == nama {
+				tampilDetailAset(A[i])
+				i++
+			}
+
 			ditemukan = true
+
 		} else if A[mid].Nama < nama {
 			low = mid + 1
 		} else {
@@ -298,6 +319,7 @@ func binarySearch(A tabCrypto, nama string) {
 		fmt.Println("Aset tidak ditemukan")
 	}
 }
+
 
 func sequentialSearch(A tabCrypto, nama string) {
 	fmt.Println("\n===================================================")
